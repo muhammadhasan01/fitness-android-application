@@ -11,17 +11,18 @@ import com.k310.fitness.fragments.ScheduleFragment
 import com.k310.fitness.fragments.TrainingFragment
 
 
-class MainActivity : AppCompatActivity() {
+open class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+
+    val newsFragment = NewsFragment()
+    val trainingFragment = TrainingFragment()
+    val historyFragment = HistoryFragment()
+    val scheduleFragment = ScheduleFragment()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        val newsFragment = NewsFragment()
-        val trainingFragment = TrainingFragment()
-        val historyFragment = HistoryFragment()
-        val scheduleFragment = ScheduleFragment()
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         makeCurrentFragment(newsFragment)
@@ -35,7 +36,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun makeCurrentFragment(fragment: Fragment) =
+    fun makeCurrentFragment(fragment: Fragment) =
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.fl_wrapper, fragment)
             commit()
