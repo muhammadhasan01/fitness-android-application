@@ -9,8 +9,9 @@ import com.k310.fitness.fragments.HistoryFragment
 import com.k310.fitness.fragments.NewsFragment
 import com.k310.fitness.fragments.ScheduleFragment
 import com.k310.fitness.fragments.TrainingFragment
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 open class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
