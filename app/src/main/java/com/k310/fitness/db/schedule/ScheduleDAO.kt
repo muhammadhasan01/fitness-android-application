@@ -1,4 +1,4 @@
-package com.k310.fitness.db
+package com.k310.fitness.db.schedule
 
 /*
  * Copyright 2018 Google LLC
@@ -16,14 +16,16 @@ package com.k310.fitness.db
  * limitations under the License.
  */
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Query
+import com.k310.fitness.db.BaseDao
 
 /**
  * The Data Access Object for the [Schedule] class.
  */
 @Dao
-interface ScheduleDao : BaseDao<Schedule> {
+interface ScheduleDAO : BaseDao<Schedule> {
     @Query("SELECT * FROM schedules")
-    fun getSchedules(): List<Schedule>
+    fun getSchedules(): LiveData<List<Schedule>>
 }

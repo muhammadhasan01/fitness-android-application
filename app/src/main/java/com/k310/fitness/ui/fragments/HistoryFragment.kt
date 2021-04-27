@@ -1,4 +1,4 @@
-package com.k310.fitness.fragments
+package com.k310.fitness.ui.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

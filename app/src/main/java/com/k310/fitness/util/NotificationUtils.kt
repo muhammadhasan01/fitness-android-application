@@ -24,7 +24,7 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import androidx.core.app.NotificationCompat
 import com.k310.fitness.R
-import com.k310.fitness.TrainingActivity
+import com.k310.fitness.ui.activities.TrainingActivity
 import com.k310.fitness.receiver.SnoozeReceiver
 
 // Notification ID.

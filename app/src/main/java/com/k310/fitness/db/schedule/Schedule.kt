@@ -1,10 +1,10 @@
-package com.k310.fitness.db
+package com.k310.fitness.db.schedule
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.k310.fitness.training.RepeatType
-import com.k310.fitness.training.TrainingType
+import com.k310.fitness.util.training.RepeatType
+import com.k310.fitness.util.training.TrainingType
 import java.util.*
 
 @Entity(tableName = "schedules")

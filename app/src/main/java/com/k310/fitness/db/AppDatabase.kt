@@ -17,62 +17,25 @@
 package com.k310.fitness.db
 
 
-import android.content.Context
 import androidx.room.Database
-import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import androidx.sqlite.db.SupportSQLiteDatabase
+import com.k310.fitness.db.converters.BitmapConverter
 import com.k310.fitness.db.converters.CalendarConverter
-import com.k310.fitness.training.RepeatType
-import com.k310.fitness.training.TrainingType
-import java.time.LocalDateTime
-import java.util.*
+import com.k310.fitness.db.schedule.Schedule
+import com.k310.fitness.db.schedule.ScheduleDAO
+import com.k310.fitness.db.training.Training
+import com.k310.fitness.db.training.TrainingDAO
 
 /**
  * The Room database that contains the Data table
  */
-@Database(entities = [Schedule::class], version = 1)
-@TypeConverters(CalendarConverter::class)
+@Database(entities = [Schedule::class, Training::class], version = 1)
+@TypeConverters(CalendarConverter::class, BitmapConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun scheduleDao(): ScheduleDao
+    abstract fun scheduleDao(): ScheduleDAO
+    abstract fun trainingDao(): TrainingDAO
 
-    companion object {
-
-        @Volatile
-        private var INSTANCE: AppDatabase? = null
-
-        fun getInstance(context: Context): AppDatabase =
-            INSTANCE ?: synchronized(this) {
-                INSTANCE ?: buildDatabase(context).also { INSTANCE = it }
-            }
-
-        private fun buildDatabase(context: Context) =
-            Room.databaseBuilder(
-                context.applicationContext,
-                AppDatabase::class.java, "Fitness.db"
-            )
-                // prepopulate the database after onCreate was called
-                .addCallback(object : Callback() {
-                    override fun onCreate(db: SupportSQLiteDatabase) {
-                        super.onCreate(db)
-                        // insert the data on the IO Thread
-                        ioThread {
-                            getInstance(context).scheduleDao().insert(PREPOPULATE_DATA)
-                        }
-                    }
-                })
-                .build()
-
-        val PREPOPULATE_DATA = listOf(
-            Schedule(
-                TrainingType.CYCLING,
-                RepeatType.ONE_TIME,
-                Calendar.getInstance(),
-                2 * 60 * 60 * 1000
-            )
-        )
-    }
 }
 

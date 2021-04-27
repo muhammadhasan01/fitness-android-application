@@ -1,16 +1,16 @@
-package com.k310.fitness.dialogs
+package com.k310.fitness.ui.dialogs
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.app.TimePickerDialog.OnTimeSetListener
-import android.content.Context
 import android.content.DialogInterface
 import android.text.format.DateFormat
 import androidx.fragment.app.FragmentActivity
-import com.k310.fitness.Alarm
-import com.k310.fitness.training.RepeatType
-import com.k310.fitness.training.TrainingType
+import com.k310.fitness.ui.viewmodels.MainViewModel
+import com.k310.fitness.util.Alarm
+import com.k310.fitness.util.training.RepeatType
+import com.k310.fitness.util.training.TrainingType
 import java.time.DayOfWeek
 import java.time.format.TextStyle
 import java.util.*
@@ -18,7 +18,7 @@ import java.util.*
 
 class ScheduleDialogs(
     private val activity: FragmentActivity?,
-    private val context: Context?,
+    private val viewModel: MainViewModel,
 ) {
     private val TAG = "ScheduleDialogs"
 
@@ -83,7 +83,9 @@ class ScheduleDialogs(
                                                 for (i in days.indices) {
                                                     if (arrayChecked[i]) {
                                                         alarm.dayOfWeek(days[i].value + Calendar.getInstance().firstDayOfWeek)
-                                                        activity?.let { alarm.set(it) }
+                                                        activity?.let {
+                                                            alarm.build().set(it, viewModel)
+                                                        }
                                                     }
                                                 }
                                             })
@@ -96,7 +98,9 @@ class ScheduleDialogs(
                                                 alarm.year(year)
                                                 alarm.monthOfYear(monthOfYear)
                                                 alarm.dayOfMonth(dayOfMonth)
-                                                activity?.let { alarm.set(it) }
+                                                activity?.let {
+                                                    alarm.build().set(it, viewModel)
+                                                }
                                             }
                                         )
                                     }

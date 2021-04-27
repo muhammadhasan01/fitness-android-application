@@ -9,5 +9,5 @@
     <string name="training_notification_title">Train NOW!!</string>
     <!--    TODO ganti snooze jadi start training-->
     <string name="snooze">Snooze</string>
-
+    <string name="google_maps_key">AIzaSyA41MIwmzLa8ZGvn7WzDlZsbaEyxy2fzOE</string>
 </resources>

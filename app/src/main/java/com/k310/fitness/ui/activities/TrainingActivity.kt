@@ -1,16 +1,11 @@
-package com.k310.fitness
+package com.k310.fitness.ui.activities
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.fragment.app.Fragment
 import com.k310.fitness.databinding.ActivityMainBinding
-import com.k310.fitness.fragments.HistoryFragment
-import com.k310.fitness.fragments.NewsFragment
-import com.k310.fitness.fragments.ScheduleFragment
-import com.k310.fitness.fragments.TrainingFragment
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class TrainingActivity : MainActivity() {
     private lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,5 +14,6 @@ class TrainingActivity : MainActivity() {
         makeCurrentFragment(trainingFragment)
 
         // TODO start training immediately
+        // harusnya gabung mainactivity, trs pake navigate (?)
     }
 }

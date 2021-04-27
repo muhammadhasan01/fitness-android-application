@@ -9,7 +9,7 @@ import android.os.PowerManager
 import android.util.Log
 import androidx.core.content.ContextCompat
 import com.k310.fitness.R
-import com.k310.fitness.training.TrainingType
+import com.k310.fitness.util.training.TrainingType
 import com.k310.fitness.util.sendNotification
 
 
