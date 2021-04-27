@@ -27,7 +27,7 @@ class AlarmReceiver : BroadcastReceiver() {
         val pm: PowerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
         val wl: PowerManager.WakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG)
 
-        wl.acquire()
+        wl.acquire(10 * 60 * 1000L /*10 minutes*/)
 
         Log.i(TAG, "Alarm ${intent.getEnumExtra<TrainingType>()}")
         val notificationManager = ContextCompat.getSystemService(

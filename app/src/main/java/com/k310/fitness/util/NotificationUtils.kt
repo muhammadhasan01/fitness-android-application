@@ -23,10 +23,8 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import androidx.core.app.NotificationCompat
-import com.k310.fitness.MainActivity
 import com.k310.fitness.R
 import com.k310.fitness.TrainingActivity
-import com.k310.fitness.fragments.ScheduleFragment
 import com.k310.fitness.receiver.SnoozeReceiver
 
 // Notification ID.
@@ -72,7 +70,8 @@ fun NotificationManager.sendNotification(messageBody: String, applicationContext
         applicationContext,
         REQUEST_CODE,
         snoozeIntent,
-        FLAGS)
+        FLAGS
+    )
 
 
     // Step 1.2 get an instance of NotificationCompat.Builder
@@ -86,8 +85,10 @@ fun NotificationManager.sendNotification(messageBody: String, applicationContext
 
         // Step 1.3 set title, text and icon to builder
         .setSmallIcon(R.drawable.cooked_egg)
-        .setContentTitle(applicationContext
-            .getString(R.string.training_notification_title))
+        .setContentTitle(
+            applicationContext
+                .getString(R.string.training_notification_title)
+        )
         .setContentText(messageBody)
 
         // Step 1.13 set content intent
@@ -108,7 +109,7 @@ fun NotificationManager.sendNotification(messageBody: String, applicationContext
         // Step 2.5 set priority
         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
     // Step 1.4 call notify
-    println(NOTIFICATION_ID)  
+    println(NOTIFICATION_ID)
     notify(NOTIFICATION_ID, builder.build())
 }
 

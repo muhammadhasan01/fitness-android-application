@@ -7,7 +7,7 @@
     <string name="channel_description">reminds you to do training</string>
     <string name="training_ready">Get your ass up, you lazy chimp</string>
     <string name="training_notification_title">Train NOW!!</string>
-<!--    TODO ganti snooze jadi start training-->
+    <!--    TODO ganti snooze jadi start training-->
     <string name="snooze">Snooze</string>
 
 </resources>
