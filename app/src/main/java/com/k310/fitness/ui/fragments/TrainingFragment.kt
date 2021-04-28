@@ -3,15 +3,18 @@ package com.k310.fitness.ui.fragments
 import android.Manifest
 import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import com.k310.fitness.R
+import com.k310.fitness.ui.activities.MainActivity
+import com.k310.fitness.ui.viewmodels.MainViewModel
 import com.k310.fitness.util.Constants.REQ_CODE_LOCATION_PERMISSIONS
 import com.k310.fitness.util.TrackingUtil
-import com.k310.fitness.ui.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
@@ -31,6 +34,7 @@ private const val ARG_PARAM2 = "param2"
 class TrainingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     // TODO: Rename and change types of parameters
     private val viewModel: MainViewModel by viewModels()
+    val trackingFragment = TrackingFragment()
     private var param1: String? = null
     private var param2: String? = null
 
@@ -48,8 +52,13 @@ class TrainingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     ): View? {
         reqPermission()
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_training, container, false)
+        val view: View = inflater.inflate(R.layout.fragment_training, container, false)
+        view.findViewById<Button>(R.id.add_button).setOnClickListener {
+            (activity as MainActivity?)!!.makeCurrentFragment(trackingFragment)
+        }
+        return view
     }
+
 
     private fun reqPermission() {
         if(TrackingUtil.hasLocPermission(requireContext())) {
@@ -95,9 +104,7 @@ class TrainingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             }
     }
 
-    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
-        TODO("Not yet implemented")
-    }
+    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {}
 
     override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {

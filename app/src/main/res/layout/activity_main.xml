@@ -13,7 +13,6 @@
         android:layout_height="match_parent"
         android:layout_above="@id/bottom_navbar"/>
 
-
     <com.ismaeldivita.chipnavigation.ChipNavigationBar
         android:layout_height="60dp"
         android:layout_width="match_parent"
