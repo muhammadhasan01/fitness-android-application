@@ -91,16 +91,32 @@ class Alarm(
 
         val alarmMgr: AlarmManager?
         alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val alarmIntent: PendingIntent =
+        var alarmIntent: PendingIntent =
             Intent(context, AlarmReceiver::class.java).let { intent ->
                 intent.putExtra(trainingType)
                 intent.putExtra("target", target)
+                intent.putExtra("is_start_training", true)
                 PendingIntent.getBroadcast(context, 0, intent, 0)
             }
 
+        // start training
         alarmMgr.setRepeating(
             AlarmManager.RTC_WAKEUP,
             calendar.timeInMillis,
+            AlarmManager.INTERVAL_DAY * 7,
+            alarmIntent
+        )
+
+        alarmIntent =
+            Intent(context, AlarmReceiver::class.java).let { intent ->
+                intent.putExtra("is_start_training", false)
+                PendingIntent.getBroadcast(context, 0, intent, 0)
+            }
+
+        // stop training
+        alarmMgr.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis + duration,
             AlarmManager.INTERVAL_DAY * 7,
             alarmIntent
         )
