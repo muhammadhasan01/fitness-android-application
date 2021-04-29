@@ -13,9 +13,10 @@ data class Schedule(
     val repeatType: RepeatType,
     var nextInvocation: Calendar,
     val duration: Long,
+    val target: Float,
 ) {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     var scheduleId: Int = 0
-    override fun toString() = "$repeatType $trainingType on ${Date(nextInvocation.timeInMillis)} for ${duration/1000/60} minutes"
+    override fun toString() = "$repeatType $trainingType on ${Date(nextInvocation.timeInMillis)} for ${duration / 60 / 1000} minutes, target: $target"
 }

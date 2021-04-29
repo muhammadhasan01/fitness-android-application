@@ -6,15 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragments.ScheduleFragment">
 
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvSchedule"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerInParent="true"
-        android:text="Schedule" />
+        tools:layout_editor_absoluteX="89dp"
+        tools:layout_editor_absoluteY="118dp" />
 
     <Button
         android:id="@+id/schedule_add_btn"
-        android:layout_width="71dp"
+        android:layout_width="65dp"
         android:layout_height="65dp"
         android:layout_marginBottom="36dp"
         android:background="@drawable/circle_btn"

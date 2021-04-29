@@ -12,7 +12,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     val mainRepository: MainRepository
-): ViewModel() {
+) : ViewModel() {
     // Training
     fun insertTraining(training: Training) = viewModelScope.launch {
         mainRepository.insertTraining(training)
@@ -31,7 +31,5 @@ class MainViewModel @Inject constructor(
         mainRepository.deleteSchedule(schedule)
     }
 
-    fun getSchedules() = viewModelScope.launch {
-        mainRepository.getSchedules()
-    }
+    fun getSchedules() = mainRepository.getSchedules()
 }

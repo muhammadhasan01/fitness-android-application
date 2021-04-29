@@ -11,8 +11,12 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LifecycleOwner
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.k310.fitness.R
 import com.k310.fitness.ui.dialogs.ScheduleDialogs
+import com.k310.fitness.ui.schedulelist.ScheduleAdapter
 import com.k310.fitness.ui.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -28,11 +32,13 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 @AndroidEntryPoint
-class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
+class ScheduleFragment : Fragment(R.layout.fragment_schedule), LifecycleOwner {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
     private val viewModel: MainViewModel by viewModels()
+    private lateinit var scheduleAdapter: ScheduleAdapter
+    private lateinit var rvSchedules: RecyclerView
     private val TAG = "ScheduleFragment"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,7 +90,17 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
         view.findViewById<Button>(R.id.schedule_add_btn).setOnClickListener {
             ScheduleDialogs(activity, viewModel).show()
         }
+
+        rvSchedules = view.findViewById<View>(R.id.rvSchedule) as RecyclerView
+        scheduleAdapter = ScheduleAdapter(emptyList())
+
+        viewModel.getSchedules().observe(viewLifecycleOwner, { scheduleList ->
+            scheduleAdapter = ScheduleAdapter(scheduleList)
+            rvSchedules.adapter = scheduleAdapter
+            rvSchedules.layoutManager = LinearLayoutManager(activity)
+        })
     }
+
 
     companion object {
         /**

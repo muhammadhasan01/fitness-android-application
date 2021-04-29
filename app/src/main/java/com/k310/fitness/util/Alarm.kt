@@ -23,6 +23,7 @@ class Alarm(
     var repeatType: RepeatType = RepeatType.WEEKLY,
     var hourOfDay: Int = 0,
     var minute: Int = 0,
+    var target: Float,
 ) {
 
     private val TAG = "Alarm"
@@ -33,11 +34,12 @@ class Alarm(
         var dayOfWeek: Int = 1,
         var year: Int = 2021,
         var monthOfYear: Int = 1,
-        var duration: Long = 5,
+        var duration: Long = 5 * 60 * 1000,
         var trainingType: TrainingType = TrainingType.CYCLING,
         var repeatType: RepeatType = RepeatType.WEEKLY,
         var hourOfDay: Int = 0,
         var minute: Int = 0,
+        var target: Float = 0f
     ) {
 
         fun repeatType(repeatType: RepeatType) = apply { this.repeatType = repeatType }
@@ -49,13 +51,15 @@ class Alarm(
         fun trainingType(trainingType: TrainingType) = apply { this.trainingType = trainingType }
         fun hourOfDay(hourOfDay: Int) = apply { this.hourOfDay = hourOfDay }
         fun minute(minute: Int) = apply { this.minute = minute }
+        fun target(target: Float) = apply { this.target = target }
 
         fun build() = Alarm(
             dayOfMonth, dayOfWeek,
             year, monthOfYear,
             duration,
             trainingType, repeatType,
-            hourOfDay, minute
+            hourOfDay, minute,
+            target
         )
     }
 
@@ -100,7 +104,7 @@ class Alarm(
             alarmIntent
         )
 
-        viewModel.insertSchedule(Schedule(trainingType, repeatType, calendar, duration))
+        viewModel.insertSchedule(Schedule(trainingType, repeatType, calendar, duration, target)).toString()
             .also {
                 Timber.i(
                     "Scheduled $repeatType $trainingType on ${Date(calendar.timeInMillis)} until ${
