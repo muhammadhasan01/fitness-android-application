@@ -1,7 +1,12 @@
 package com.k310.fitness.models
 
+import com.google.gson.annotations.SerializedName
+
 class NewsResponse {
-    var status: String? = null
-    var totalResults = 0
-    var articles: List<News>? = null
+    @SerializedName("status")
+    lateinit var status: String
+    @SerializedName("totalResults")
+    val totalResults = 0
+    @SerializedName("articles")
+    lateinit var articles: List<News>
 }
