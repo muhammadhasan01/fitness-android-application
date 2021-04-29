@@ -143,7 +143,7 @@ class TrackingService : LifecycleService() {
     private fun updateLocation(isTracking: Boolean) {
         if(isTracking) {
             if (TrackingUtil.hasLocPermission(this)) {
-                val request = LocationRequest.create().apply {
+                val request = LocationRequest().apply {
                     interval = LOCATION_UPDATE_INTERVAL
                     fastestInterval = FASTEST_LOCATION_INTERVAL
                     priority = PRIORITY_HIGH_ACCURACY
@@ -163,10 +163,10 @@ class TrackingService : LifecycleService() {
         override fun onLocationResult(result: LocationResult) {
             super.onLocationResult(result)
             if (isTracking.value!!) {
-                result.locations.let { locations ->
+                result?.locations?.let { locations ->
                     for(location in locations) {
                         addCordPoints(location)
-                        Timber.d("NEW LOCATION: ${location.latitude}, ${location.longitude})")
+                        Timber.d("NEW LOCATION: (${location.latitude}, ${location.longitude}): ${runtimeInMs.value!!}")
                     }
                 }
             }
@@ -204,7 +204,7 @@ class TrackingService : LifecycleService() {
             .setOngoing(true)
             .setSmallIcon(R.drawable.icon_run)
             .setContentTitle("Fitness")
-            .setContentText("00:00:00")
+            .setContentText("Training is being tracked! See progress here")
             .setContentIntent(getPendingIntent())
 
         startForeground(NOTIFICATION_ID, notificationBuilder.build())

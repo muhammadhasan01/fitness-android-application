@@ -8,11 +8,14 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import com.k310.fitness.R
 import com.k310.fitness.databinding.ActivityMainBinding
 import com.k310.fitness.databinding.FragmentTrackingBinding
+import com.k310.fitness.db.training.Training
 import com.k310.fitness.services.Polyline
 import com.k310.fitness.services.TrackingService
 import com.k310.fitness.ui.activities.MainActivity
@@ -25,6 +28,9 @@ import com.k310.fitness.util.Constants.POLYLINE_COLOR
 import com.k310.fitness.util.Constants.POLYLINE_WIDTH
 import com.k310.fitness.util.TrackingUtil
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
+import java.util.*
+import kotlin.math.round
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -74,6 +80,10 @@ class TrackingFragment : Fragment() {
         binding.cancelTraining.setOnClickListener {
             showCancelDialog()
         }
+        binding.finishTraining.setOnClickListener {
+            zoomFull()
+            endRunAndSave()
+        }
         binding.mapView.getMapAsync {
             map = it
             addAllPolylines()
@@ -115,7 +125,7 @@ class TrackingFragment : Fragment() {
             .setMessage("Are you sure want to cancel the training?")
             .setIcon(R.drawable.icon_delete)
             .setPositiveButton("Yes") { _, _ ->
-                stopRun()
+                stopTraining()
             }
             .setNegativeButton("No") { dialogInterface, _ ->
                 dialogInterface.cancel()
@@ -124,19 +134,19 @@ class TrackingFragment : Fragment() {
         dialog.show()
     }
 
-    private fun stopRun() {
-        binding.cancelTraining.visibility = View.GONE
-        binding.finishTraining.visibility = View.GONE
+    private fun stopTraining() {
+        binding.tvTimer.text = "00:00:00:00"
+        (activity as MainActivity?)!!.toTrainingFragment()
         sendCommand(ACTION_STOP_SERVICE)
     }
 
     private fun updateTracking(isTracking: Boolean) {
         this.isTracking = isTracking
-        if(!isTracking) {
+        if(!isTracking && currentTimeMs > 0L) {
             binding.startTraining.text = "Start"
             binding.finishTraining.visibility = View.VISIBLE
             binding.cancelTraining.visibility = View.VISIBLE
-        } else {
+        } else if(isTracking) {
             binding.startTraining.text = "Stop"
             binding.finishTraining.visibility = View.GONE
             binding.cancelTraining.visibility = View.GONE
@@ -151,6 +161,43 @@ class TrackingFragment : Fragment() {
                     MAP_ZOOM
                 )
             )
+        }
+    }
+
+    private fun zoomFull() {
+        val bounds = LatLngBounds.Builder()
+        for(polyline in cordPoints) {
+            for (pos in polyline) {
+                bounds.include(pos)
+            }
+        }
+
+        map?.moveCamera(
+            CameraUpdateFactory.newLatLngBounds(
+                bounds.build(),
+                binding.mapView.width,
+                binding.mapView.height,
+                (binding.mapView.width * 0.05f).toInt()
+            )
+        )
+    }
+
+    private fun endRunAndSave() {
+        map?.snapshot { bmp ->
+            var distanceInM = 0
+            for(polyline in cordPoints) {
+                distanceInM += TrackingUtil.calculatePolylineLength(polyline).toInt()
+            }
+            val avgSpeed = round((distanceInM / 1000f) / (currentTimeMs / 1000f / 60 / 60) * 10) / 10f
+            val timestamp = Calendar.getInstance().timeInMillis
+            val training = Training(bmp, timestamp, avgSpeed, distanceInM, currentTimeMs)
+            viewModel.insertTraining(training)
+            Snackbar.make(
+                requireActivity().findViewById(R.id.rootView),
+                "Training saved",
+                Snackbar.LENGTH_LONG
+            ).show()
+            stopTraining()
         }
     }
 
@@ -174,6 +221,7 @@ class TrackingFragment : Fragment() {
                 .add(beforeLastLatLng)
                 .add(lastLatLng)
             map?.addPolyline(polylineOptions)
+            Timber.d("Polyline Added")
         }
     }
 

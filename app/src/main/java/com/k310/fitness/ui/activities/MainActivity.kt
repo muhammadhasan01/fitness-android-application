@@ -53,6 +53,10 @@ open class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun toTrainingFragment() {
+        makeCurrentFragment(trackingFragment)
+    }
+
     fun makeCurrentFragment(fragment: Fragment) =
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.fl_wrapper, fragment)
