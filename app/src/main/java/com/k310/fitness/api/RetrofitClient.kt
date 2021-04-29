@@ -4,28 +4,22 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.Retrofit
 
 class RetrofitClient private constructor() {
-    private val retrofit: Retrofit
+    private val retrofit: Retrofit = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
     val api: Api
         get() = retrofit.create(Api::class.java)
 
     companion object {
         private const val BASE_URL = "https://newsapi.org/v2/"
-        private var mInstance: RetrofitClient? = null
+        private var mInstance = RetrofitClient()
 
         @get:Synchronized
-        val instance: RetrofitClient?
+        val instance: RetrofitClient
             get() {
-                if (mInstance == null) {
-                    mInstance = RetrofitClient()
-                }
                 return mInstance
             }
     }
 
-    init {
-        retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
 }
