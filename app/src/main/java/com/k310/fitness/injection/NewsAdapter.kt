@@ -9,7 +9,7 @@ import com.k310.fitness.R
 import com.k310.fitness.models.News
 
 class NewsAdapter(newsList: List<News>?) : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
-    private val newsList: List<News>?
+    private val newsList: List<News>? = newsList
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
         return NewsViewHolder(
             LayoutInflater.from(parent.context)
@@ -19,27 +19,19 @@ class NewsAdapter(newsList: List<News>?) : RecyclerView.Adapter<NewsAdapter.News
 
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
         val news = newsList?.get(position)
-        holder.txtNewsAuthor
+        holder.txtNewsAuthor.text = news?.author
+        holder.txtNewsDesc.text = news?.description
+        holder.txtNewsTitle.text = news?.title
     }
 
-    override fun getItemCount() = if (newsList != null) newsList.size else 0
+    override fun getItemCount() = newsList?.size ?: 0
 
     inner class NewsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val txtNewsDesc: TextView
-        val txtNewsTitle: TextView
-        val txtNewsAuthor: TextView
-
-        init {
-            txtNewsTitle = itemView
-                .findViewById(R.id.txt_news_title) as TextView
-            txtNewsAuthor = itemView
-                .findViewById(R.id.txt_news_author) as TextView
-            txtNewsDesc = itemView
-                .findViewById(R.id.txt_news_desc) as TextView
-        }
-    }
-
-    init {
-        this.newsList = newsList
+        val txtNewsDesc: TextView = itemView
+            .findViewById(R.id.txt_news_desc) as TextView
+        val txtNewsTitle: TextView = itemView
+            .findViewById(R.id.txt_news_title) as TextView
+        val txtNewsAuthor: TextView = itemView
+            .findViewById(R.id.txt_news_author) as TextView
     }
 }
