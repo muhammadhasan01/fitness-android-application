@@ -47,6 +47,7 @@ typealias Polylines = MutableList<Polyline>
 class TrackingService : LifecycleService() {
 
     var isFirst = true
+    var serviceKilled = false
 
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
@@ -74,6 +75,15 @@ class TrackingService : LifecycleService() {
         })
     }
 
+    private fun killService() {
+        serviceKilled = true
+        isFirst = true
+        pauseService()
+        postInitValues()
+        stopForeground(true)
+        stopSelf()
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.let {
             when (it.action) {
@@ -92,6 +102,7 @@ class TrackingService : LifecycleService() {
                 }
                 ACTION_STOP_SERVICE -> {
                     Timber.d("Service stopped")
+                    killService()
                 }
             }
         }
@@ -132,7 +143,7 @@ class TrackingService : LifecycleService() {
     private fun updateLocation(isTracking: Boolean) {
         if(isTracking) {
             if (TrackingUtil.hasLocPermission(this)) {
-                val request = LocationRequest().apply {
+                val request = LocationRequest.create().apply {
                     interval = LOCATION_UPDATE_INTERVAL
                     fastestInterval = FASTEST_LOCATION_INTERVAL
                     priority = PRIORITY_HIGH_ACCURACY
@@ -152,7 +163,7 @@ class TrackingService : LifecycleService() {
         override fun onLocationResult(result: LocationResult) {
             super.onLocationResult(result)
             if (isTracking.value!!) {
-                result?.locations?.let { locations ->
+                result.locations.let { locations ->
                     for(location in locations) {
                         addCordPoints(location)
                         Timber.d("NEW LOCATION: ${location.latitude}, ${location.longitude})")
@@ -171,6 +182,7 @@ class TrackingService : LifecycleService() {
             }
         }
     }
+
     private fun addEmptyPolyline() = cordPoints.value?.apply {
         add(mutableListOf())
         cordPoints.postValue(this)

@@ -2,23 +2,24 @@ package com.k310.fitness.ui.fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.k310.fitness.R
 import com.k310.fitness.databinding.ActivityMainBinding
 import com.k310.fitness.databinding.FragmentTrackingBinding
 import com.k310.fitness.services.Polyline
 import com.k310.fitness.services.TrackingService
+import com.k310.fitness.ui.activities.MainActivity
 import com.k310.fitness.ui.viewmodels.MainViewModel
 import com.k310.fitness.util.Constants.ACTION_PAUSE_SERVICE
 import com.k310.fitness.util.Constants.ACTION_START_OR_RESUME_SERVICE
+import com.k310.fitness.util.Constants.ACTION_STOP_SERVICE
 import com.k310.fitness.util.Constants.MAP_ZOOM
 import com.k310.fitness.util.Constants.POLYLINE_COLOR
 import com.k310.fitness.util.Constants.POLYLINE_WIDTH
@@ -70,6 +71,9 @@ class TrackingFragment : Fragment() {
         binding.startTraining.setOnClickListener {
             toggleTraining()
         }
+        binding.cancelTraining.setOnClickListener {
+            showCancelDialog()
+        }
         binding.mapView.getMapAsync {
             map = it
             addAllPolylines()
@@ -105,14 +109,37 @@ class TrackingFragment : Fragment() {
         }
     }
 
+    private fun showCancelDialog() {
+        val dialog = MaterialAlertDialogBuilder(requireContext(), R.style.AlertDialogTheme)
+            .setTitle("Cancel Training?")
+            .setMessage("Are you sure want to cancel the training?")
+            .setIcon(R.drawable.icon_delete)
+            .setPositiveButton("Yes") { _, _ ->
+                stopRun()
+            }
+            .setNegativeButton("No") { dialogInterface, _ ->
+                dialogInterface.cancel()
+            }
+            .create()
+        dialog.show()
+    }
+
+    private fun stopRun() {
+        binding.cancelTraining.visibility = View.GONE
+        binding.finishTraining.visibility = View.GONE
+        sendCommand(ACTION_STOP_SERVICE)
+    }
+
     private fun updateTracking(isTracking: Boolean) {
         this.isTracking = isTracking
         if(!isTracking) {
             binding.startTraining.text = "Start"
             binding.finishTraining.visibility = View.VISIBLE
+            binding.cancelTraining.visibility = View.VISIBLE
         } else {
             binding.startTraining.text = "Stop"
             binding.finishTraining.visibility = View.GONE
+            binding.cancelTraining.visibility = View.GONE
         }
     }
 
