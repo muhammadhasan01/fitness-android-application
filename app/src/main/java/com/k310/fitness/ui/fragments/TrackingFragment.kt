@@ -22,6 +22,7 @@ import com.k310.fitness.util.Constants.ACTION_START_OR_RESUME_SERVICE
 import com.k310.fitness.util.Constants.MAP_ZOOM
 import com.k310.fitness.util.Constants.POLYLINE_COLOR
 import com.k310.fitness.util.Constants.POLYLINE_WIDTH
+import com.k310.fitness.util.TrackingUtil
 import dagger.hilt.android.AndroidEntryPoint
 
 // TODO: Rename parameter arguments, choose names that match
@@ -45,6 +46,8 @@ class TrackingFragment : Fragment() {
     private lateinit var binding: FragmentTrackingBinding
 
     private var map: GoogleMap? = null
+
+    private var currentTimeMs = 0L
 
     private var param1: String? = null
     private var param2: String? = null
@@ -85,6 +88,12 @@ class TrackingFragment : Fragment() {
             cordPoints = it
             addLatestPolyline()
             moveCamera()
+        })
+
+        TrackingService.runtimeInMs.observe(viewLifecycleOwner, Observer {
+            currentTimeMs = it
+            val formattedTime = TrackingUtil.getFormattedTime(currentTimeMs, true)
+            binding.tvTimer.text = formattedTime
         })
     }
 
