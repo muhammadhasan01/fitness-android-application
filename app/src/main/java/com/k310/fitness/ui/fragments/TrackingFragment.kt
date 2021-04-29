@@ -7,13 +7,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.PolylineOptions
 import com.k310.fitness.R
 import com.k310.fitness.databinding.ActivityMainBinding
 import com.k310.fitness.databinding.FragmentTrackingBinding
+import com.k310.fitness.services.Polyline
 import com.k310.fitness.services.TrackingService
 import com.k310.fitness.ui.viewmodels.MainViewModel
+import com.k310.fitness.util.Constants.ACTION_PAUSE_SERVICE
 import com.k310.fitness.util.Constants.ACTION_START_OR_RESUME_SERVICE
+import com.k310.fitness.util.Constants.MAP_ZOOM
+import com.k310.fitness.util.Constants.POLYLINE_COLOR
+import com.k310.fitness.util.Constants.POLYLINE_WIDTH
 import dagger.hilt.android.AndroidEntryPoint
 
 // TODO: Rename parameter arguments, choose names that match
@@ -30,8 +38,14 @@ private const val ARG_PARAM2 = "param2"
 class TrackingFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private val viewModel: MainViewModel by viewModels()
+
+    private var isTracking = false
+    private var cordPoints = mutableListOf<Polyline>()
+
     private lateinit var binding: FragmentTrackingBinding
+
     private var map: GoogleMap? = null
+
     private var param1: String? = null
     private var param2: String? = null
 
@@ -51,12 +65,80 @@ class TrackingFragment : Fragment() {
         binding = FragmentTrackingBinding.inflate(layoutInflater)
         binding.mapView.onCreate(savedInstanceState)
         binding.startTraining.setOnClickListener {
-            sendCommand(ACTION_START_OR_RESUME_SERVICE)
+            toggleTraining()
         }
         binding.mapView.getMapAsync {
             map = it
+            addAllPolylines()
         }
+
+        subscribeToObservers()
         return binding.root
+    }
+
+    private fun subscribeToObservers() {
+        TrackingService.isTracking.observe(viewLifecycleOwner, Observer {
+            updateTracking(it)
+        })
+
+        TrackingService.cordPoints.observe(viewLifecycleOwner, Observer {
+            cordPoints = it
+            addLatestPolyline()
+            moveCamera()
+        })
+    }
+
+    private fun toggleTraining() {
+        if(isTracking) {
+            sendCommand(ACTION_PAUSE_SERVICE)
+        } else {
+            sendCommand(ACTION_START_OR_RESUME_SERVICE)
+        }
+    }
+
+    private fun updateTracking(isTracking: Boolean) {
+        this.isTracking = isTracking
+        if(!isTracking) {
+            binding.startTraining.text = "Start"
+            binding.finishTraining.visibility = View.VISIBLE
+        } else {
+            binding.startTraining.text = "Stop"
+            binding.finishTraining.visibility = View.GONE
+        }
+    }
+
+    private fun moveCamera() {
+        if(cordPoints.isNotEmpty() && cordPoints.last().isNotEmpty()) {
+            map?.animateCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    cordPoints.last().last(),
+                    MAP_ZOOM
+                )
+            )
+        }
+    }
+
+    private fun addAllPolylines() {
+        for(polyline in cordPoints) {
+            val polylineOptions = PolylineOptions()
+                .color(POLYLINE_COLOR)
+                .width(POLYLINE_WIDTH)
+                .addAll(polyline)
+            map?.addPolyline(polylineOptions)
+        }
+    }
+
+    private fun addLatestPolyline() {
+        if(cordPoints.isNotEmpty() && cordPoints.last().size > 1) {
+            val beforeLastLatLng = cordPoints.last()[cordPoints.last().size - 2]
+            val lastLatLng = cordPoints.last().last()
+            val polylineOptions = PolylineOptions()
+                .color(POLYLINE_COLOR)
+                .width(POLYLINE_WIDTH)
+                .add(beforeLastLatLng)
+                .add(lastLatLng)
+            map?.addPolyline(polylineOptions)
+        }
     }
 
     private fun sendCommand(action: String) =

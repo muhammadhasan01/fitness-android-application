@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:text="00:00:00:00"
             android:textSize="50sp"
-            app:layout_constraintBottom_toTopOf="@+id/btnToggleRun"
+            app:layout_constraintBottom_toTopOf="@+id/startTraining"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
@@ -34,13 +34,13 @@
             android:layout_height="wrap_content"
             android:text="Start"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btnFinishRun"
+            app:layout_constraintEnd_toStartOf="@+id/finishTraining"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvTimer" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnFinishRun"
+            android:id="@+id/finishTraining"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Finish Run"
@@ -48,7 +48,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/btnToggleRun"
+            app:layout_constraintStart_toEndOf="@+id/startTraining"
             app:layout_constraintTop_toBottomOf="@+id/tvTimer" />
 
 
