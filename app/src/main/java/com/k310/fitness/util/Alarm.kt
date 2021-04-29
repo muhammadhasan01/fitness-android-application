@@ -94,6 +94,7 @@ class Alarm(
         val alarmIntent: PendingIntent =
             Intent(context, AlarmReceiver::class.java).let { intent ->
                 intent.putExtra(trainingType)
+                intent.putExtra("target", target)
                 PendingIntent.getBroadcast(context, 0, intent, 0)
             }
 

@@ -15,5 +15,6 @@ class TrainingActivity : MainActivity() {
 
         // TODO start training immediately
         // harusnya gabung mainactivity, trs pake navigate (?)
+
     }
 }

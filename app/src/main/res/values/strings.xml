@@ -5,8 +5,7 @@
     <string name="channel_id" translatable="false">train_reminder</string>
     <string name="channel_name" translatable="true">Train Reminder</string>
     <string name="channel_description">reminds you to do training</string>
-    <string name="training_ready">Get your ass up, you lazy chimp</string>
-    <string name="training_notification_title">Train NOW!!</string>
+    <string name="training_notification_title">Your body needs to move</string>
     <!--    TODO ganti snooze jadi start training-->
     <string name="snooze">Snooze</string>
     <string name="google_maps_key">AIzaSyDnXVb-gKBnWsrjM_46mKikJwiYOVy4KnA</string>

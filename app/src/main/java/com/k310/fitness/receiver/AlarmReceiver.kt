@@ -5,12 +5,14 @@ import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.os.PowerManager
 import android.util.Log
 import androidx.core.content.ContextCompat
 import com.k310.fitness.R
 import com.k310.fitness.util.training.TrainingType
 import com.k310.fitness.util.sendNotification
+import timber.log.Timber
 
 
 class AlarmReceiver : BroadcastReceiver() {
@@ -29,14 +31,17 @@ class AlarmReceiver : BroadcastReceiver() {
 
         wl.acquire(10 * 60 * 1000L /*10 minutes*/)
 
-        Log.i(TAG, "Alarm ${intent.getEnumExtra<TrainingType>()}")
+        val trainingType = intent.getEnumExtra<TrainingType>()
+        val target = intent.extras?.getFloat("target")
+        val targetType = if (trainingType==TrainingType.CYCLING) "kilometers" else "steps"
+        Timber.i("Alarm $trainingType")
         val notificationManager = ContextCompat.getSystemService(
             context,
             NotificationManager::class.java
         ) as NotificationManager
 
         notificationManager.sendNotification(
-            context.getText(R.string.training_ready).toString(),
+            "$trainingType, target: $target $targetType",
             context
         )
 
