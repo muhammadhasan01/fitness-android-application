@@ -53,6 +53,7 @@ class TrackingService : LifecycleService() {
 
     private val runtimeInS = MutableLiveData<Long>()
 
+
     companion object {
         val runtimeInMs = MutableLiveData<Long>()
         val isTracking = MutableLiveData<Boolean>()

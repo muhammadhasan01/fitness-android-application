@@ -147,6 +147,7 @@ class TrackingFragment : Fragment() {
     }
 
     private fun stopTraining() {
+        distanceInM = 0f
         binding.tvTimer.text = "00:00:00:00"
         sendCommand(ACTION_STOP_SERVICE)
         (activity as MainActivity?)!!.toTrainingFragment()
