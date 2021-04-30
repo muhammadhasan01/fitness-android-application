@@ -12,6 +12,13 @@
     <string name="kumpulan_berita">List of Indonesian Sport News</string>
     <string name="compass_hands">Compass Hand</string>
     <string name="compass_dial">Compass Dial</string>
+    <string name="log_detail">Log Detail</string>
+    <string name="training_type">Training Type</string>
+    <string name="start_time">Start Time</string>
+    <string name="average_km_hour">Average (KM/hour)</string>
+    <string name="duration">Duration</string>
+    <string name="detail">Detail</string>
+    <string name="end_time">End Time</string>
     <string-array name="filter_options">
         <item>Distance</item>
         <item>Average Speed</item>
