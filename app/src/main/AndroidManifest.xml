@@ -39,9 +39,6 @@
             android:launchMode="singleTask"
             android:parentActivityName=".ui.activities.MainActivity"
             android:taskAffinity=""></activity>
-            android:taskAffinity=""
-            android:excludeFromRecents="true">
-        </activity>
 
         <service android:name=".services.TrackingService"
             android:foregroundServiceType="location"/>
