@@ -40,6 +40,12 @@
             android:launchMode="singleTask"
             android:parentActivityName=".ui.activities.MainActivity"
             android:taskAffinity="" />
+        <activity
+            android:name=".ui.activities.LogDetailActivity"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:parentActivityName=".ui.activities.MainActivity"
+            android:taskAffinity="" />
 
         <service
             android:name=".services.TrackingService"
