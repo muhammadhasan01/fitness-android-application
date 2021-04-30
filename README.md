@@ -24,7 +24,7 @@ Project dapat dibuka dengan Android Studio dan melakukan beberapa *setup sync* d
 
 Berikut adalah beberapa *library/assets* yang kami gunakan, beserta justifikasi pemakainnya:
 
-- [Chip NavBar](https://github.com/ismaeldivita/chip-navigation-bar)
+- [Chip NavBar](https://github.com/ismaeldivita/chip-navigation-bar) - Digunakan untuk *Custom Navigation Bar*
 - Retrofit - Digunakan untuk melakukan *fetch* API
 - [Compass](https://github.com/iutinvg/compass) - untuk melakukan wrap position sensor
 - Material Design - membuat tampilan lebih rapi
