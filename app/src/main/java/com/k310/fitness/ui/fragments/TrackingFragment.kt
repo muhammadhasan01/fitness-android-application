@@ -19,6 +19,8 @@ import com.k310.fitness.services.Polyline
 import com.k310.fitness.services.TrackingService
 import com.k310.fitness.ui.activities.MainActivity
 import com.k310.fitness.ui.viewmodels.MainViewModel
+import com.k310.fitness.util.Compass
+import com.k310.fitness.util.CompassSetup
 import com.k310.fitness.util.Constants.ACTION_PAUSE_SERVICE
 import com.k310.fitness.util.Constants.ACTION_START_OR_RESUME_SERVICE
 import com.k310.fitness.util.Constants.ACTION_STOP_SERVICE
@@ -56,6 +58,7 @@ class TrackingFragment : Fragment() {
     private var map: GoogleMap? = null
 
     private var currentTimeMs = 0L
+    private lateinit var compass: Compass
 
     private var distanceInM = 0f
 
@@ -91,8 +94,11 @@ class TrackingFragment : Fragment() {
             map = it
             addAllPolylines()
         }
-
         subscribeToObservers()
+        compass = activity?.let { Compass(it) }!!
+        activity?.let {
+            CompassSetup(compass, it, binding.mainImageHands)
+        }
         return binding.root
     }
 
@@ -251,21 +257,25 @@ class TrackingFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         binding.mapView.onResume()
+        compass.start()
     }
 
     override fun onStart() {
         super.onStart()
         binding.mapView.onStart()
+        compass.start()
     }
 
     override fun onStop() {
         super.onStop()
         binding.mapView.onStop()
+        compass.stop()
     }
 
     override fun onPause() {
         super.onPause()
         binding.mapView.onPause()
+        compass.stop()
     }
 
     override fun onLowMemory() {
