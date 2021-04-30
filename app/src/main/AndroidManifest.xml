@@ -32,13 +32,13 @@
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:parentActivityName=".ui.activities.MainActivity"
-            android:taskAffinity=""></activity>
+            android:taskAffinity="" />
         <activity
             android:name=".ui.activities.NewsWebActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:parentActivityName=".ui.activities.MainActivity"
-            android:taskAffinity=""></activity>
+            android:taskAffinity="" />
 
         <service android:name=".services.TrackingService"
             android:foregroundServiceType="location"/>
@@ -46,20 +46,18 @@
         <receiver
             android:name=".receiver.AlarmReceiver"
             android:enabled="true"
-            android:exported="false"></receiver>
+            android:exported="false" />
         <receiver
             android:name=".receiver.SnoozeReceiver"
             android:enabled="true"
-            android:exported="false"></receiver>
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
         <meta-data
-            android:name="com.google.android.gms.API_KEY"
-            android:value="@string/google_maps_key" />
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key"/>
+            android:value="@string/google_maps_key" />
         <uses-library android:name="org.apache.http.legacy" android:required="false"/>
     </application>
 
