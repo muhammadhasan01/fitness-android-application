@@ -11,7 +11,6 @@ import com.k310.fitness.util.sendNotification
 import com.k310.fitness.util.training.TrainingType
 import timber.log.Timber
 
-
 class AlarmReceiver : BroadcastReceiver() {
     private val TAG = "AlarmReceiver"
 
@@ -29,6 +28,7 @@ class AlarmReceiver : BroadcastReceiver() {
         wl.acquire(10 * 60 * 1000L /*10 minutes*/)
 
         val isStartTraining = intent.extras?.getBoolean("is_start_training")
+        val runInBackground = intent.extras?.getBoolean("run_in_background")
         if (isStartTraining == true) {
             val trainingType = intent.getEnumExtra<TrainingType>()
             val target = intent.extras?.getFloat("target")
@@ -43,6 +43,9 @@ class AlarmReceiver : BroadcastReceiver() {
                 "$trainingType, target: $target $targetType",
                 context
             )
+            if(runInBackground == true){
+                context.startService(intent)
+            }
         } else {
             val notificationManager = ContextCompat.getSystemService(
                 context,

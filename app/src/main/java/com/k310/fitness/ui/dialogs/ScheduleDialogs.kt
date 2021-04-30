@@ -49,61 +49,66 @@ class ScheduleDialogs(
                                 selectTargetAlertDialog(
                                     next = { _, value, _ ->
                                         alarm.target(value.toFloat())
-                                        selectRepeatTypeAlertDialog(
-                                            nextRepeating = { _, _ ->
-                                                alarm.repeatType(RepeatType.WEEKLY)
-                                                val days = arrayOf(
-                                                    DayOfWeek.MONDAY,
-                                                    DayOfWeek.TUESDAY,
-                                                    DayOfWeek.WEDNESDAY,
-                                                    DayOfWeek.THURSDAY,
-                                                    DayOfWeek.FRIDAY,
-                                                    DayOfWeek.SATURDAY,
-                                                    DayOfWeek.SUNDAY
-                                                )
+                                        selectRunInBackgroundAlertDialog(
+                                            alarm,
+                                            next = { _, _ ->
+                                                selectRepeatTypeAlertDialog(
+                                                    nextRepeating = { _, _ ->
+                                                        alarm.repeatType(RepeatType.WEEKLY)
+                                                        val days = arrayOf(
+                                                            DayOfWeek.MONDAY,
+                                                            DayOfWeek.TUESDAY,
+                                                            DayOfWeek.WEDNESDAY,
+                                                            DayOfWeek.THURSDAY,
+                                                            DayOfWeek.FRIDAY,
+                                                            DayOfWeek.SATURDAY,
+                                                            DayOfWeek.SUNDAY
+                                                        )
 
-                                                val arrayChecked =
-                                                    booleanArrayOf(
-                                                        false,
-                                                        false,
-                                                        false,
-                                                        false,
-                                                        false,
-                                                        false,
-                                                        false
-                                                    )
-                                                arrayChecked[Calendar.getInstance()
-                                                    .get(Calendar.DAY_OF_WEEK) - Calendar.getInstance().firstDayOfWeek - 1] =
-                                                    true
+                                                        val arrayChecked =
+                                                            booleanArrayOf(
+                                                                false,
+                                                                false,
+                                                                false,
+                                                                false,
+                                                                false,
+                                                                false,
+                                                                false
+                                                            )
+                                                        arrayChecked[Calendar.getInstance()
+                                                            .get(Calendar.DAY_OF_WEEK) - Calendar.getInstance().firstDayOfWeek - 1] =
+                                                            true
 
-                                                selectRepeatingDayAlertDialog(
-                                                    days,
-                                                    arrayChecked,
-                                                    onSelect = { _, which, isChecked ->
-                                                        arrayChecked[which] = isChecked
+                                                        selectRepeatingDayAlertDialog(
+                                                            days,
+                                                            arrayChecked,
+                                                            onSelect = { _, which, isChecked ->
+                                                                arrayChecked[which] = isChecked
+                                                            },
+                                                            next = { _, _ ->
+                                                                for (i in days.indices) {
+                                                                    if (arrayChecked[i]) {
+                                                                        alarm.dayOfWeek(days[i].value + Calendar.getInstance().firstDayOfWeek)
+                                                                        activity?.let {
+                                                                            alarm.build().set(it, viewModel)
+                                                                        }
+                                                                    }
+                                                                }
+                                                            })
                                                     },
-                                                    next = { _, _ ->
-                                                        for (i in days.indices) {
-                                                            if (arrayChecked[i]) {
-                                                                alarm.dayOfWeek(days[i].value + Calendar.getInstance().firstDayOfWeek)
+
+                                                    nextNonRepeating = { _, _ ->
+                                                        alarm.repeatType(RepeatType.ONE_TIME)
+                                                        selectOneTimeDayAlertDialog(
+                                                            onDateSetListener = { _, year, monthOfYear, dayOfMonth ->
+                                                                alarm.year(year)
+                                                                alarm.monthOfYear(monthOfYear)
+                                                                alarm.dayOfMonth(dayOfMonth)
                                                                 activity?.let {
                                                                     alarm.build().set(it, viewModel)
                                                                 }
                                                             }
-                                                        }
-                                                    })
-                                            },
-
-                                            nextNonRepeating = { _, _ ->
-                                                alarm.repeatType(RepeatType.ONE_TIME)
-                                                selectOneTimeDayAlertDialog(
-                                                    onDateSetListener = { _, year, monthOfYear, dayOfMonth ->
-                                                        alarm.year(year)
-                                                        alarm.monthOfYear(monthOfYear)
-                                                        alarm.dayOfMonth(dayOfMonth)
-                                                        activity?.let {
-                                                            alarm.build().set(it, viewModel)
-                                                        }
+                                                        )
                                                     }
                                                 )
                                             }
@@ -187,6 +192,28 @@ class ScheduleDialogs(
         dialog = builder.create()
         dialog.show()
     }
+
+    private fun selectRunInBackgroundAlertDialog(
+        alarm : Alarm.Builder,
+        next : DialogInterface.OnClickListener,
+    ) {
+        lateinit var dialog: AlertDialog
+
+        val builder = AlertDialog.Builder(activity)
+        builder.setTitle("Automatic start?")
+        builder.setPositiveButton("YES") { v, w ->
+            alarm.runInBackground(true)
+            next.onClick(v, w)
+        }
+        builder.setNegativeButton("NO") { v, w ->
+            alarm.runInBackground(false)
+            next.onClick(v, w)
+        }
+
+        dialog = builder.create()
+        dialog.show()
+    }
+
 
     private fun selectRepeatTypeAlertDialog(
         nextRepeating: DialogInterface.OnClickListener,
