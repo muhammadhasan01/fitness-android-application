@@ -37,8 +37,13 @@ Berikut adalah beberapa *library/assets* yang kami gunakan, beserta justifikasi 
 - Timber
 
 ## Screenshot Aplikasi
-![NewsList](screenshots/NewsList.jpg)
-![NewsWebView](screenshots/NewsWebView.jpg)
+
+### News:
+<img src="screenshots/NewsList.jpg" width="300">
+<img src="screenshots/NewsWebView.jpg" width="300">
+
+### Training Tracker:
+<img src="screenshots/TrainingTracker.jpg"  width="300">
 
 ### Pembagian Kerja
 
