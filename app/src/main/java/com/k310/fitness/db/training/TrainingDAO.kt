@@ -7,8 +7,11 @@ import com.k310.fitness.db.BaseDao
 
 @Dao
 interface TrainingDAO : BaseDao<Training> {
-    @Query("SELECT * FROM training_table ORDER BY stopTime DESC")
+    @Query("SELECT * FROM training_table ORDER BY startTime DESC")
     fun getTrainingsByDate(): LiveData<List<Training>>
+
+    @Query("SELECT * FROM training_table WHERE startTime BETWEEN :dayInMs AND :nextDayInMs")
+    fun getTrainingsByDate(dayInMs: Long, nextDayInMs: Long): LiveData<List<Training>>
 
     @Query("SELECT * FROM training_table ORDER BY avgInKMH DESC")
     fun getTrainingsByAvg(): LiveData<List<Training>>

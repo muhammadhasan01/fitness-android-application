@@ -1,21 +1,22 @@
 package com.k310.fitness.ui.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import android.widget.CalendarView
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.k310.fitness.R
-import com.k310.fitness.ui.dialogs.ScheduleDialogs
 import com.k310.fitness.ui.historyList.HistoryAdapter
-import com.k310.fitness.ui.schedulelist.ScheduleAdapter
 import com.k310.fitness.ui.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
+import java.util.*
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -33,6 +34,7 @@ class HistoryFragment : Fragment(), LifecycleOwner {
     private val viewModel: MainViewModel by viewModels()
     private lateinit var historyAdapter: HistoryAdapter
     private lateinit var rvHistory: RecyclerView
+    private lateinit var cvHistory: CalendarView
 
     private var param1: String? = null
     private var param2: String? = null
@@ -64,6 +66,24 @@ class HistoryFragment : Fragment(), LifecycleOwner {
             rvHistory.adapter = historyAdapter
             rvHistory.layoutManager = LinearLayoutManager(activity)
         })
+
+        cvHistory = view.findViewById<View>(R.id.calendarView) as CalendarView
+        cvHistory.setOnDateChangeListener { view, year, month, dayOfMonth ->
+            val calendar = Calendar.getInstance().apply {
+                timeInMillis = 0
+                set(Calendar.YEAR, year)
+                set(Calendar.MONTH, month)
+                set(Calendar.DAY_OF_MONTH, dayOfMonth)
+            }
+            val timeInMs = calendar.timeInMillis
+            val historyListLiveData =
+                viewModel.getTrainingsByDate(timeInMs, timeInMs + 1000 * 60 * 60 * 24)
+            historyListLiveData.observe(viewLifecycleOwner, { historyList ->
+                historyAdapter = HistoryAdapter(historyList)
+                rvHistory.adapter = historyAdapter
+                rvHistory.layoutManager = LinearLayoutManager(activity)
+            })
+        }
     }
 
     companion object {

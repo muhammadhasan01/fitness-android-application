@@ -12,11 +12,13 @@ class MainRepository @Inject constructor(
     val scheduleDAO: ScheduleDAO
 ) {
     private val schedules : LiveData<List<Schedule>> = scheduleDAO.getSchedules()
+    private val trainingsByDate : LiveData<List<Training>> = trainingDAO.getTrainingsByDate()
     // Training
     suspend fun insertTraining(training: Training) = trainingDAO.insert(training)
     suspend fun deleteTraining(training: Training) = trainingDAO.delete(training)
 
-    fun getTrainingsByDate() = trainingDAO.getTrainingsByDate()
+    fun getTrainingsByDate() = trainingsByDate
+    fun getTrainingsByDate(dayInMs: Long, nextDayInMs: Long) = trainingDAO.getTrainingsByDate(dayInMs, nextDayInMs)
     fun getTrainingsByDistance() = trainingDAO.getTrainingsByDistance()
     fun getTrainingsByAvg() = trainingDAO.getTrainingsByAvg()
     fun getTrainingsByTime() = trainingDAO.getTrainingsByTime()

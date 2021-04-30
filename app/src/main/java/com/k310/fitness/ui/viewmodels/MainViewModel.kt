@@ -23,6 +23,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun getTrainingsByDate() = mainRepository.getTrainingsByDate()
+    fun getTrainingsByDate(dayInMs: Long, nextDayInMs: Long) = mainRepository.getTrainingsByDate(dayInMs, nextDayInMs)
     fun getTrainingsByDistance() = mainRepository.getTrainingsByDistance()
     fun getTrainingsByAvg() = mainRepository.getTrainingsByAvg()
     fun getTrainingsByTime() = mainRepository.getTrainingsByTime()
