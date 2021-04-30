@@ -37,8 +37,8 @@ Berikut adalah beberapa *library/assets* yang kami gunakan, beserta justifikasi 
 - Timber
 
 ## Screenshot Aplikasi
-
-<!-- Tambahin SS -->
+![NewsList](screenshots/NewsList.jpg)
+![NewsWebView](screenshots/NewsWebView.jpg)
 
 ### Pembagian Kerja
 
