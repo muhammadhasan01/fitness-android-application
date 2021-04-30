@@ -56,6 +56,8 @@ class TrackingFragment : Fragment() {
 
     private var currentTimeMs = 0L
 
+    private var distanceInM = 0f
+
     private var param1: String? = null
     private var param2: String? = null
 
@@ -136,8 +138,8 @@ class TrackingFragment : Fragment() {
 
     private fun stopTraining() {
         binding.tvTimer.text = "00:00:00:00"
-        (activity as MainActivity?)!!.toTrainingFragment()
         sendCommand(ACTION_STOP_SERVICE)
+        (activity as MainActivity?)!!.toTrainingFragment()
     }
 
     private fun updateTracking(isTracking: Boolean) {
@@ -221,7 +223,8 @@ class TrackingFragment : Fragment() {
                 .add(beforeLastLatLng)
                 .add(lastLatLng)
             map?.addPolyline(polylineOptions)
-            Timber.d("Polyline Added")
+            distanceInM += TrackingUtil.calculatePolylineLength(cordPoints.last()).toInt()
+            Timber.d("Polyline Added, ${distanceInM}")
         }
     }
 

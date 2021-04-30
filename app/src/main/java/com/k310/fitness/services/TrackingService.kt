@@ -206,7 +206,6 @@ class TrackingService : LifecycleService() {
             .setContentTitle("Fitness")
             .setContentText("Training is being tracked! See progress here")
             .setContentIntent(getPendingIntent())
-
         startForeground(NOTIFICATION_ID, notificationBuilder.build())
     }
 

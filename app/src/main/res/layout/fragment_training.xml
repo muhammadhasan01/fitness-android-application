@@ -10,15 +10,14 @@
         android:id="@+id/targetLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
         android:text="Current Target:"
         android:textColor="@color/black"
         android:textSize="20dp"
         app:layout_constraintBottom_toTopOf="@+id/target"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="spread" />
 
     <TextView
         android:id="@+id/target"
@@ -26,29 +25,58 @@
         android:layout_height="wrap_content"
         android:text="No Data!"
         android:textSize="48dp"
-        app:layout_constraintBottom_toTopOf="@+id/add_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/targetLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/targetLabel"
+        app:layout_constraintBottom_toTopOf="@id/buttons"/>
 
-    <Button
-        android:id="@+id/add_button"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="80dp"
-        android:contentDescription="Add button"
-        android:src="@drawable/icon_add"
-        android:text="Add Training"
-        android:textColor="@color/black"
-        app:backgroundTint="@color/colorAccent"
-        app:fabSize="normal"
+        android:id="@+id/buttons"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/target"
-        app:rippleColor="@android:color/white"
-        app:tint="@android:color/black" />
+        app:layout_constraintTop_toBottomOf="@+id/target">
+
+        <Button
+            android:id="@+id/add_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="Add button"
+            android:src="@drawable/icon_add"
+            android:text="Cycling"
+            android:textColor="@color/black"
+            app:backgroundTint="@color/colorAccent"
+            app:fabSize="normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/add_running_button"
+            app:rippleColor="@android:color/white"
+            app:tint="@android:color/black" />
+
+        <Button
+            android:id="@+id/add_running_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="Add button"
+            android:src="@drawable/icon_add"
+            android:text="Running"
+            android:textColor="@color/black"
+            app:backgroundTint="@color/colorAccent"
+            app:fabSize="normal"
+            app:layout_constraintEnd_toStartOf="@+id/add_button"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:rippleColor="@android:color/white"
+            app:tint="@android:color/black" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

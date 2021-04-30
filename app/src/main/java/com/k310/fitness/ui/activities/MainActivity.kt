@@ -18,6 +18,7 @@ open class MainActivity : AppCompatActivity() {
     private val newsFragment = NewsFragment()
     val trainingFragment = TrainingFragment()
     val trackingFragment = TrackingFragment()
+    val counterFragment = CounterFragment()
     private val historyFragment = HistoryFragment()
     private val scheduleFragment = ScheduleFragment()
 

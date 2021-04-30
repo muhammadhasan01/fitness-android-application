@@ -113,4 +113,7 @@ dependencies {
 
     // MPAndroidChart
     implementation 'android.arch.lifecycle:extensions:1.1.1'
+
+    // Circular bar
+    implementation 'com.mikhaellopez:circularprogressbar:3.0.3'
 }

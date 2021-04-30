@@ -35,6 +35,7 @@ class TrainingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     // TODO: Rename and change types of parameters
     private val viewModel: MainViewModel by viewModels()
     val trackingFragment = TrackingFragment()
+    val counterFragment = CounterFragment()
     private var param1: String? = null
     private var param2: String? = null
 
@@ -56,9 +57,11 @@ class TrainingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         view.findViewById<Button>(R.id.add_button).setOnClickListener {
             (activity as MainActivity?)!!.makeCurrentFragment(trackingFragment)
         }
+        view.findViewById<Button>(R.id.add_running_button).setOnClickListener {
+            (activity as MainActivity?)!!.makeCurrentFragment(counterFragment)
+        }
         return view
     }
-
 
     private fun reqPermission() {
         if(TrackingUtil.hasLocPermission(requireContext())) {
@@ -79,7 +82,8 @@ class TrainingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                 REQ_CODE_LOCATION_PERMISSIONS,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+                Manifest.permission.ACTIVITY_RECOGNITION
             )
         }
     }
