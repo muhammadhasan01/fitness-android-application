@@ -48,7 +48,6 @@ Berikut adalah beberapa *library/assets* yang kami gunakan, beserta justifikasi 
     - Membuat GridView Landscape News
     - Membuat Compass
     - Membuat Halaman Log Detail
-
 - Hafshy Yazid Albisthami (13518051)
     - Pembuatan Navbar dan template fragmentnya
     - Fitur Training Tracker (Cycling dan Running)
