@@ -13,7 +13,6 @@ import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.k310.fitness.R
-import com.k310.fitness.databinding.ActivityMainBinding
 import com.k310.fitness.databinding.FragmentTrackingBinding
 import com.k310.fitness.db.training.Training
 import com.k310.fitness.services.Polyline
@@ -27,6 +26,7 @@ import com.k310.fitness.util.Constants.MAP_ZOOM
 import com.k310.fitness.util.Constants.POLYLINE_COLOR
 import com.k310.fitness.util.Constants.POLYLINE_WIDTH
 import com.k310.fitness.util.TrackingUtil
+import com.k310.fitness.util.training.TrainingType
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import java.util.*
@@ -49,6 +49,7 @@ class TrackingFragment : Fragment() {
 
     private var isTracking = false
     private var cordPoints = mutableListOf<Polyline>()
+    private var startTime: Calendar? = null
 
     private lateinit var binding: FragmentTrackingBinding
 
@@ -112,10 +113,13 @@ class TrackingFragment : Fragment() {
     }
 
     private fun toggleTraining() {
-        if(isTracking) {
+        if (isTracking) {
             sendCommand(ACTION_PAUSE_SERVICE)
         } else {
             sendCommand(ACTION_START_OR_RESUME_SERVICE)
+            if (startTime == null) {
+                startTime = Calendar.getInstance()
+            }
         }
     }
 
@@ -142,11 +146,11 @@ class TrackingFragment : Fragment() {
 
     private fun updateTracking(isTracking: Boolean) {
         this.isTracking = isTracking
-        if(!isTracking && currentTimeMs > 0L) {
+        if (!isTracking && currentTimeMs > 0L) {
             binding.startTraining.text = "Start"
             binding.finishTraining.visibility = View.VISIBLE
             binding.cancelTraining.visibility = View.VISIBLE
-        } else if(isTracking) {
+        } else if (isTracking) {
             binding.startTraining.text = "Stop"
             binding.finishTraining.visibility = View.GONE
             binding.cancelTraining.visibility = View.GONE
@@ -154,7 +158,7 @@ class TrackingFragment : Fragment() {
     }
 
     private fun moveCamera() {
-        if(cordPoints.isNotEmpty() && cordPoints.last().isNotEmpty()) {
+        if (cordPoints.isNotEmpty() && cordPoints.last().isNotEmpty()) {
             map?.animateCamera(
                 CameraUpdateFactory.newLatLngZoom(
                     cordPoints.last().last(),
@@ -166,7 +170,7 @@ class TrackingFragment : Fragment() {
 
     private fun zoomFull() {
         val bounds = LatLngBounds.Builder()
-        for(polyline in cordPoints) {
+        for (polyline in cordPoints) {
             for (pos in polyline) {
                 bounds.include(pos)
             }
@@ -185,24 +189,34 @@ class TrackingFragment : Fragment() {
     private fun endRunAndSave() {
         map?.snapshot { bmp ->
             var distanceInM = 0
-            for(polyline in cordPoints) {
+            for (polyline in cordPoints) {
                 distanceInM += TrackingUtil.calculatePolylineLength(polyline).toInt()
             }
-            val avgSpeed = round((distanceInM / 1000f) / (currentTimeMs / 1000f / 60 / 60) * 10) / 10f
-            val timestamp = Calendar.getInstance().timeInMillis
-            val training = Training(bmp, timestamp, avgSpeed, distanceInM, currentTimeMs)
-            viewModel.insertTraining(training)
-            Snackbar.make(
-                requireActivity().findViewById(R.id.rootView),
-                "Training saved",
-                Snackbar.LENGTH_LONG
-            ).show()
+            val avgSpeed =
+                round((distanceInM / 1000f) / (currentTimeMs / 1000f / 60 / 60) * 10) / 10f
+            startTime?.let {
+                viewModel.insertTraining(
+                    Training(
+                        bmp,
+                        TrainingType.CYCLING,
+                        it, Calendar.getInstance(),
+                        distanceInM.toFloat(),
+                        currentTimeMs,
+                        avgSpeed
+                    )
+                )
+                Snackbar.make(
+                    requireActivity().findViewById(R.id.rootView),
+                    "Training saved",
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
             stopTraining()
         }
     }
 
     private fun addAllPolylines() {
-        for(polyline in cordPoints) {
+        for (polyline in cordPoints) {
             val polylineOptions = PolylineOptions()
                 .color(POLYLINE_COLOR)
                 .width(POLYLINE_WIDTH)
@@ -212,7 +226,7 @@ class TrackingFragment : Fragment() {
     }
 
     private fun addLatestPolyline() {
-        if(cordPoints.isNotEmpty() && cordPoints.last().size > 1) {
+        if (cordPoints.isNotEmpty() && cordPoints.last().size > 1) {
             val beforeLastLatLng = cordPoints.last()[cordPoints.last().size - 2]
             val lastLatLng = cordPoints.last().last()
             val polylineOptions = PolylineOptions()

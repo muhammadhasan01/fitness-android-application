@@ -5,7 +5,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.LifecycleOwner
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.k310.fitness.R
+import com.k310.fitness.ui.dialogs.ScheduleDialogs
+import com.k310.fitness.ui.historyList.HistoryAdapter
+import com.k310.fitness.ui.schedulelist.ScheduleAdapter
+import com.k310.fitness.ui.viewmodels.MainViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -17,8 +27,13 @@ private const val ARG_PARAM2 = "param2"
  * Use the [HistoryFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class HistoryFragment : Fragment() {
+@AndroidEntryPoint
+class HistoryFragment : Fragment(), LifecycleOwner {
     // TODO: Rename and change types of parameters
+    private val viewModel: MainViewModel by viewModels()
+    private lateinit var historyAdapter: HistoryAdapter
+    private lateinit var rvHistory: RecyclerView
+
     private var param1: String? = null
     private var param2: String? = null
 
@@ -36,6 +51,19 @@ class HistoryFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_history, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        rvHistory = view.findViewById<View>(R.id.rvHistory) as RecyclerView
+        historyAdapter = HistoryAdapter(emptyList())
+
+        viewModel.getTrainingsByDate().observe(viewLifecycleOwner, { historyList ->
+            historyAdapter = HistoryAdapter(historyList)
+            rvHistory.adapter = historyAdapter
+            rvHistory.layoutManager = LinearLayoutManager(activity)
+        })
     }
 
     companion object {
