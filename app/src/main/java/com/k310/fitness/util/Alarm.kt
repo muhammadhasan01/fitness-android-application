@@ -4,7 +4,6 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import androidx.lifecycle.MediatorLiveData
 import com.k310.fitness.db.schedule.Schedule
 import com.k310.fitness.receiver.AlarmReceiver
 import com.k310.fitness.ui.viewmodels.MainViewModel
@@ -24,11 +23,8 @@ class Alarm(
     var hourOfDay: Int = 0,
     var minute: Int = 0,
     var target: Float,
+    var runInBackground: Boolean = false,
 ) {
-
-    private val TAG = "Alarm"
-    val schedules = MediatorLiveData<List<Schedule>>()
-
     data class Builder(
         var dayOfMonth: Int = 1,
         var dayOfWeek: Int = 1,
@@ -39,7 +35,8 @@ class Alarm(
         var repeatType: RepeatType = RepeatType.WEEKLY,
         var hourOfDay: Int = 0,
         var minute: Int = 0,
-        var target: Float = 0f
+        var target: Float = 0f,
+        var runInBackground: Boolean = false,
     ) {
 
         fun repeatType(repeatType: RepeatType) = apply { this.repeatType = repeatType }
@@ -52,6 +49,8 @@ class Alarm(
         fun hourOfDay(hourOfDay: Int) = apply { this.hourOfDay = hourOfDay }
         fun minute(minute: Int) = apply { this.minute = minute }
         fun target(target: Float) = apply { this.target = target }
+        fun runInBackground(runInBackground: Boolean) =
+            apply { this.runInBackground = runInBackground }
 
         fun build() = Alarm(
             dayOfMonth, dayOfWeek,
@@ -59,7 +58,8 @@ class Alarm(
             duration,
             trainingType, repeatType,
             hourOfDay, minute,
-            target
+            target,
+            runInBackground
         )
     }
 
@@ -77,13 +77,13 @@ class Alarm(
             ) // TODO set jadi 0
             set(Calendar.MILLISECOND, 0)
         }
-        if (repeatType.equals(RepeatType.ONE_TIME)) {
+        if (repeatType == RepeatType.ONE_TIME) {
             calendar.apply {
                 set(Calendar.YEAR, year)
                 set(Calendar.MONTH, monthOfYear)
                 set(Calendar.DAY_OF_MONTH, dayOfMonth)
             }
-        } else if (repeatType.equals(RepeatType.WEEKLY)) {
+        } else if (repeatType == RepeatType.WEEKLY) {
             calendar.apply {
                 set(Calendar.DAY_OF_WEEK, dayOfWeek)
             }
@@ -96,6 +96,7 @@ class Alarm(
                 intent.putExtra(trainingType)
                 intent.putExtra("target", target)
                 intent.putExtra("is_start_training", true)
+                intent.putExtra("run_in_background", runInBackground)
                 PendingIntent.getBroadcast(context, 0, intent, 0)
             }
 
@@ -110,23 +111,33 @@ class Alarm(
         alarmIntent =
             Intent(context, AlarmReceiver::class.java).let { intent ->
                 intent.putExtra("is_start_training", false)
+                intent.putExtra("run_in_background", runInBackground)
                 PendingIntent.getBroadcast(context, 0, intent, 0)
             }
 
-        // stop training
-        alarmMgr.setRepeating(
-            AlarmManager.RTC_WAKEUP,
-            calendar.timeInMillis + duration,
-            AlarmManager.INTERVAL_DAY * 7,
-            alarmIntent
-        )
+//        // stop training
+//        alarmMgr.setRepeating(
+//            AlarmManager.RTC_WAKEUP,
+//            calendar.timeInMillis + duration,
+//            AlarmManager.INTERVAL_DAY * 7,
+//            alarmIntent
+//        )
 
-        viewModel.insertSchedule(Schedule(trainingType, repeatType, calendar, duration, target)).toString()
+        viewModel.insertSchedule(
+            Schedule(
+                trainingType,
+                repeatType,
+                calendar,
+                duration,
+                target,
+                runInBackground
+            )
+        ).toString()
             .also {
                 Timber.i(
                     "Scheduled $repeatType $trainingType on ${Date(calendar.timeInMillis)} until ${
                         Date(calendar.timeInMillis + duration)
-                    }"
+                    }. run in background: $runInBackground"
                 )
             }
     }
