@@ -199,7 +199,7 @@ class CounterFragment : Fragment(), SensorEventListener {
                 viewModel.insertTraining(
                     Training(
                         bmp,
-                        TrainingType.CYCLING,
+                        TrainingType.RUNNING,
                         it, Calendar.getInstance(),
                         prevTotal.toFloat(),
                         currentTimeMs,
