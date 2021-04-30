@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.CalendarView
+import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,7 +17,14 @@ import com.k310.fitness.ui.dialogs.ScheduleDialogs
 import com.k310.fitness.ui.historyList.HistoryAdapter
 import com.k310.fitness.ui.schedulelist.ScheduleAdapter
 import com.k310.fitness.ui.viewmodels.MainViewModel
+import com.kizitonwose.calendarview.model.CalendarDay
+import com.kizitonwose.calendarview.model.DayOwner
+import com.kizitonwose.calendarview.ui.DayBinder
+import com.kizitonwose.calendarview.ui.ViewContainer
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.YearMonth
+import java.time.temporal.WeekFields
+import java.util.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -56,6 +65,14 @@ class HistoryFragment : Fragment(), LifecycleOwner {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        var calendarView = view.findViewById<View>(R.id.calendarView)
+        val currentMonth = YearMonth.now()
+        val firstMonth = currentMonth.minusMonths(10)
+        val lastMonth = currentMonth.plusMonths(10)
+        val firstDayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek
+        calendarView.setup(firstMonth, lastMonth, firstDayOfWeek)
+        calendarView.scrollToMonth(currentMonth)
+
         rvHistory = view.findViewById<View>(R.id.rvHistory) as RecyclerView
         historyAdapter = HistoryAdapter(emptyList())
 
@@ -64,6 +81,37 @@ class HistoryFragment : Fragment(), LifecycleOwner {
             rvHistory.adapter = historyAdapter
             rvHistory.layoutManager = LinearLayoutManager(activity)
         })
+
+        class DayViewContainer(view: View) : ViewContainer(view) {
+            lateinit var day: CalendarDay
+            val textView = view.findViewById<TextView>(R.id.calendarDayText)
+
+            // With ViewBinding
+            // val textView = CalendarDayLayoutBinding.bind(view).calendarDayText
+
+            init {
+                view.setOnClickListener {
+                    if (day.owner == DayOwner.THIS_MONTH) {
+                        if (selectedDates.contains(day.date)) {
+                            selectedDates.remove(day.date)
+                        } else {
+                            selectedDates.add(day.date)
+                        }
+                        calendarView.notifyDayChanged(day)
+                    }
+                }
+            }
+        }
+
+        calendarView.dayBinder = object : DayBinder<DayViewContainer> {
+            // Called only when a new container is needed.
+            override fun create(view: View) = DayViewContainer(view)
+
+            // Called every time we need to reuse a container.
+            override fun bind(container: DayViewContainer, day: CalendarDay) {
+                container.textView.text = day.date.dayOfMonth.toString()
+            }
+        }
     }
 
     companion object {
