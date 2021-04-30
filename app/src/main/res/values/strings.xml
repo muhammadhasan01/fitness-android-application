@@ -8,7 +8,8 @@
     <string name="training_notification_title">Your body needs to move</string>
     <!--    TODO ganti snooze jadi start training-->
     <string name="snooze">Snooze</string>
-    <string name="google_maps_key">AIzaSyDnXVb-gKBnWsrjM_46mKikJwiYOVy4KnA</string>
+    <string name="google_maps_key">AIzaSyA41MIwmzLa8ZGvn7WzDlZsbaEyxy2fzOE</string>
+    <string name="kumpulan_berita">List of Indonesian Sport News</string>
     <string-array name="filter_options">
         <item>Distance</item>
         <item>Average Speed</item>

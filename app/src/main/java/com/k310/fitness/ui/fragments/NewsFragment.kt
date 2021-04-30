@@ -1,60 +1,108 @@
 package com.k310.fitness.ui.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.k310.fitness.R
+import android.widget.Toast
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.k310.fitness.api.RetrofitClient
+import com.k310.fitness.databinding.FragmentNewsBinding
+import com.k310.fitness.injection.NewsAdapter
+import com.k310.fitness.models.News
+import com.k310.fitness.models.NewsResponse
+import com.k310.fitness.ui.activities.NewsWebActivity
+import com.k310.fitness.ui.viewmodels.NewsViewModel
+import com.k310.fitness.util.Constants.EXTRA_MESSAGE
+import com.k310.fitness.util.NewsItemClickListener
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [NewsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class NewsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var viewModel: NewsViewModel
+    private var newsList: ArrayList<News>? = null
+    private val country = "id"
+    private val category = "sports"
+    private val apiKey: String = "4861e1ba910c48d280b2eff1e538f927"
+    private lateinit var binding: FragmentNewsBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_news, container, false)
+        binding = FragmentNewsBinding.inflate(inflater, container, false);
+        return binding.root;
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment NewsFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            NewsFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        viewModel = ViewModelProviders.of(this).get(NewsViewModel::class.java)
+        binding.refreshLayoutNews.setOnRefreshListener { injectData(country, category, apiKey) }
+        injectData(country, category, apiKey)
+    }
+
+    private fun injectData(country: String, category: String, apiKey: String) {
+        val refreshLayout = binding.refreshLayoutNews
+        refreshLayout.isRefreshing = true
+        newsList = ArrayList()
+        val call = RetrofitClient.instance.api.getAllNews(country, category, apiKey);
+        call.enqueue(object : Callback<NewsResponse?> {
+            override fun onResponse(call: Call<NewsResponse?>?, response: Response<NewsResponse?>) {
+                refreshLayout.isRefreshing = false
+                val listOfNews: List<News>? = response.body()?.articles
+                if (listOfNews != null) {
+                    for (i in listOfNews.indices) {
+                        if (listOfNews[i].author == null) continue
+                        if (listOfNews[i].title == null) continue
+                        if (listOfNews[i].description == null) continue
+                        if (listOfNews[i].url == null) continue
+                        (newsList as ArrayList<News>).add(
+                            News(
+                                listOfNews[i].author,
+                                listOfNews[i].title,
+                                listOfNews[i].description,
+                                listOfNews[i].url
+                            )
+                        )
+                    }
                 }
+                hookingAdapter(newsList as ArrayList<News>)
             }
+
+            override fun onFailure(call: Call<NewsResponse?>?, t: Throwable?) {
+                refreshLayout.isRefreshing = false
+                Toast.makeText(activity, t?.message, Toast.LENGTH_LONG).show()
+            }
+        })
+    }
+
+    private fun hookingAdapter(listNews: List<News>) {
+        val adapter = NewsAdapter(listNews)
+        val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(activity)
+        val recyclerNews = binding.recyclerNews
+
+        recyclerNews.adapter = adapter
+        recyclerNews.layoutManager = layoutManager
+
+        recyclerNews.addOnItemTouchListener(
+            NewsItemClickListener(
+                activity,
+                recyclerNews,
+                object : NewsItemClickListener.OnItemClickListener {
+                    override fun onItemClick(view: View, position: Int) {
+                        val news = listNews[position]
+                        val intent = Intent(activity, NewsWebActivity::class.java).apply {
+                            putExtra(EXTRA_MESSAGE, news.url)
+                        }
+                        startActivity(intent)
+                    }
+                })
+        )
     }
 }
