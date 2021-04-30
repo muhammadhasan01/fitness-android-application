@@ -21,9 +21,16 @@ Project dapat dibuka dengan Android Studio dan melakukan beberapa *setup sync* d
 
 Berikut adalah beberapa *library/assets* yang kami gunakan, beserta justifikasi pemakainnya:
 
-- ...
-- ...
-- ...
+- [Chip NavBar](https://github.com/ismaeldivita/chip-navigation-bar)
+- Material Design
+- Lifeccyle ViewModel
+- Room
+- Coroutines
+- Kotlin-extensions
+- Google Maps Location Service
+- Dagger
+- Easy Permission
+- Timber
 
 ## Screenshot Aplikasi
 
@@ -35,8 +42,9 @@ Berikut adalah beberapa *library/assets* yang kami gunakan, beserta justifikasi 
     - ...
     - ...
 - Hafshy Yazid Albisthami (13518051)
-    - ...
-    - ...
+    - Pembuatan Navbar dan template fragmentnya
+    - Fitur Training Tracker (Cycling dan Running)
+    - Membantu pembuatan Database
 - Jonathan Yudi Gunawan (13518084)
     - ...
     - ...
