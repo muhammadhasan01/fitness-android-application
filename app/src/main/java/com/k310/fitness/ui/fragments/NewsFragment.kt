@@ -1,7 +1,7 @@
 package com.k310.fitness.ui.fragments
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,13 +10,15 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.k310.fitness.R
 import com.k310.fitness.api.RetrofitClient
 import com.k310.fitness.databinding.FragmentNewsBinding
 import com.k310.fitness.injection.NewsAdapter
 import com.k310.fitness.models.News
 import com.k310.fitness.models.NewsResponse
+import com.k310.fitness.ui.activities.NewsWebActivity
 import com.k310.fitness.ui.viewmodels.NewsViewModel
+import com.k310.fitness.util.Constants.EXTRA_MESSAGE
+import com.k310.fitness.util.NewsItemClickListener
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -41,18 +43,18 @@ class NewsFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(NewsViewModel::class.java)
-        Log.d("Some sheep", "Created")
         binding.refreshLayoutNews.setOnRefreshListener { injectData(country, category, apiKey) }
         injectData(country, category, apiKey)
     }
 
     private fun injectData(country: String, category: String, apiKey: String) {
-        binding.refreshLayoutNews.isRefreshing = true
+        val refreshLayout = binding.refreshLayoutNews
+        refreshLayout.isRefreshing = true
         newsList = ArrayList()
         val call = RetrofitClient.instance.api.getAllNews(country, category, apiKey);
         call.enqueue(object : Callback<NewsResponse?> {
             override fun onResponse(call: Call<NewsResponse?>?, response: Response<NewsResponse?>) {
-                binding.refreshLayoutNews.isRefreshing = false
+                refreshLayout.isRefreshing = false
                 val listOfNews: List<News>? = response.body()?.articles
                 if (listOfNews != null) {
                     for (i in listOfNews.indices) {
@@ -70,12 +72,11 @@ class NewsFragment : Fragment() {
                         )
                     }
                 }
-                Log.d("Some sheep", newsList.toString())
                 hookingAdapter(newsList as ArrayList<News>)
             }
 
             override fun onFailure(call: Call<NewsResponse?>?, t: Throwable?) {
-                binding.refreshLayoutNews.isRefreshing = false
+                refreshLayout.isRefreshing = false
                 Toast.makeText(activity, t?.message, Toast.LENGTH_LONG).show()
             }
         })
@@ -84,9 +85,24 @@ class NewsFragment : Fragment() {
     private fun hookingAdapter(listNews: List<News>) {
         val adapter = NewsAdapter(listNews)
         val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(activity)
+        val recyclerNews = binding.recyclerNews
 
-        binding.recyclerNews.adapter = adapter
-        binding.recyclerNews.layoutManager = layoutManager
-        // TODO: Add an onClickListener to open a webView
+        recyclerNews.adapter = adapter
+        recyclerNews.layoutManager = layoutManager
+
+        recyclerNews.addOnItemTouchListener(
+            NewsItemClickListener(
+                activity,
+                recyclerNews,
+                object : NewsItemClickListener.OnItemClickListener {
+                    override fun onItemClick(view: View, position: Int) {
+                        val news = listNews[position]
+                        val intent = Intent(activity, NewsWebActivity::class.java).apply {
+                            putExtra(EXTRA_MESSAGE, news.url)
+                        }
+                        startActivity(intent)
+                    }
+                })
+        )
     }
 }
