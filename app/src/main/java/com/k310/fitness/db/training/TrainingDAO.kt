@@ -7,22 +7,22 @@ import com.k310.fitness.db.BaseDao
 
 @Dao
 interface TrainingDAO : BaseDao<Training> {
-    @Query("SELECT * FROM training_table ORDER BY timestamp DESC")
+    @Query("SELECT * FROM training_table ORDER BY stopTime DESC")
     fun getTrainingsByDate(): LiveData<List<Training>>
 
     @Query("SELECT * FROM training_table ORDER BY avgInKMH DESC")
     fun getTrainingsByAvg(): LiveData<List<Training>>
 
-    @Query("SELECT * FROM training_table ORDER BY timeInMs DESC")
+    @Query("SELECT * FROM training_table ORDER BY duration DESC")
     fun getTrainingsByTime(): LiveData<List<Training>>
 
-    @Query("SELECT * FROM training_table ORDER BY distanceInMeters DESC")
+    @Query("SELECT * FROM training_table ORDER BY detail DESC")
     fun getTrainingsByDistance(): LiveData<List<Training>>
 
-    @Query("SELECT SUM(timeInMs) FROM training_table")
+    @Query("SELECT SUM(duration) FROM training_table")
     fun getTotalTime(): LiveData<Long>
 
-    @Query("SELECT SUM(distanceInMeters) FROM training_table")
+    @Query("SELECT SUM(detail) FROM training_table")
     fun getTotalDistance(): LiveData<Int>
 
     @Query("SELECT AVG(avgInKMH) FROM training_table")

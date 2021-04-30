@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -17,9 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="606dp"
             tools:layout_editor_absoluteX="300dp"
-            tools:layout_editor_absoluteY="200dp">
-
-        </androidx.recyclerview.widget.RecyclerView>
+            tools:layout_editor_absoluteY="200dp"/>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

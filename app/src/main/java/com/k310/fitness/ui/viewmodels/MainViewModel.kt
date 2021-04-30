@@ -22,6 +22,15 @@ class MainViewModel @Inject constructor(
         mainRepository.deleteTraining(training)
     }
 
+    fun getTrainingsByDate() = mainRepository.getTrainingsByDate()
+    fun getTrainingsByDistance() = mainRepository.getTrainingsByDistance()
+    fun getTrainingsByAvg() = mainRepository.getTrainingsByAvg()
+    fun getTrainingsByTime() = mainRepository.getTrainingsByTime()
+
+    fun getTotalTime() = mainRepository.getTotalTime()
+    fun getTotalDistance() = mainRepository.getTotalDistance()
+    fun getTotalAvg() = mainRepository.getTotalAvg()
+
     // Schedules
     fun insertSchedule(schedule: Schedule) = viewModelScope.launch {
         mainRepository.insertSchedule(schedule)
