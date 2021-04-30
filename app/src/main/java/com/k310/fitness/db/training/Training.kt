@@ -20,6 +20,7 @@ data class Training(
     var id: Int? = null
     override fun toString(): String {
         val unit = if (trainingType == TrainingType.CYCLING) "kilometers" else "steps"
-        return "$trainingType on ${Date(startTime.timeInMillis)} until ${Date(stopTime.timeInMillis)}, achieved: $detail $unit"
+        val detailString = if (trainingType == TrainingType.CYCLING) "${detail/1000}" else "$detail"
+        return "$trainingType on ${Date(startTime.timeInMillis)} until ${Date(stopTime.timeInMillis)}, achieved: $detailString $unit"
     }
 }
