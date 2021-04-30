@@ -20,7 +20,7 @@ Project dapat dibuka dengan Android Studio dan melakukan beberapa *setup sync* d
 | Cycling Tracker | Cycling Tracker menggunakan map untuk menghitung jarak dan juga penggambaran rute, selain itu digunakan juga API Google Maps untuk menampilkan map dan rutenya, Cycling dapat disimpan dalam DB |
 | Halaman Log Detail | Halaman Log Detail dibuat dengan membuat fragment untuk Log Detail kemudian dibuat *listener* untuk setiap log info yang jika dilakukan *click* pada *item* maka akan membuka *detail* dari log tersebut |
 | Compass | Compass dibuat dengan mengacu pada referensi yang ada pada library, dengan kemudian ditaruh pada pojok kanan Maps |
-
+| Database | Database menggunakan SQLite dengan library Room. Kemudian dibungkus dengan sebuah repository yang diinject pada masing-masing class yang bertanda `@AndroidEntryPoint` di awal classnya. Kemudian class tersebut dapat mengakses database dengan memanggil `MainViewModel by viewModels()` |
 
 
 ## Library yang digunakan
