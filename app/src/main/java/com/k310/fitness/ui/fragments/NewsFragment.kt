@@ -3,7 +3,6 @@ package com.k310.fitness.ui.fragments
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -21,7 +20,7 @@ import com.k310.fitness.models.NewsResponse
 import com.k310.fitness.ui.activities.NewsWebActivity
 import com.k310.fitness.ui.viewmodels.NewsViewModel
 import com.k310.fitness.util.Constants.EXTRA_MESSAGE
-import com.k310.fitness.util.NewsItemClickListener
+import com.k310.fitness.util.RecyclerItemClickListener
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -107,10 +106,10 @@ class NewsFragment : Fragment() {
         recyclerNews.layoutManager = layoutManager
 
         recyclerNews.addOnItemTouchListener(
-            NewsItemClickListener(
+            RecyclerItemClickListener(
                 activity,
                 recyclerNews,
-                object : NewsItemClickListener.OnItemClickListener {
+                object : RecyclerItemClickListener.OnItemClickListener {
                     override fun onItemClick(view: View, position: Int) {
                         val news = listNews[position]
                         val intent = Intent(activity, NewsWebActivity::class.java).apply {
