@@ -19,7 +19,9 @@
         android:theme="@style/Theme.Fitness">
         <activity
             android:name=".ui.activities.MainActivity"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

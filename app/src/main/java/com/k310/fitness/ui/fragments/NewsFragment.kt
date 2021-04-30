@@ -1,13 +1,16 @@
 package com.k310.fitness.ui.fragments
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.k310.fitness.api.RetrofitClient
@@ -28,6 +31,7 @@ class NewsFragment : Fragment() {
     private var newsList: ArrayList<News>? = null
     private val country = "id"
     private val category = "sports"
+    private var curOrientation = 0
     private val apiKey: String = "4861e1ba910c48d280b2eff1e538f927"
     private lateinit var binding: FragmentNewsBinding
 
@@ -44,6 +48,7 @@ class NewsFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(NewsViewModel::class.java)
         binding.refreshLayoutNews.setOnRefreshListener { injectData(country, category, apiKey) }
+        curOrientation = resources.configuration.orientation
         injectData(country, category, apiKey)
     }
 
@@ -82,9 +87,20 @@ class NewsFragment : Fragment() {
         })
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        curOrientation = newConfig.orientation
+        injectData(country, category, apiKey)
+    }
+
     private fun hookingAdapter(listNews: List<News>) {
         val adapter = NewsAdapter(listNews)
-        val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(activity)
+        lateinit var layoutManager: RecyclerView.LayoutManager
+        if (curOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+            layoutManager = GridLayoutManager(activity, 2)
+        } else {
+            layoutManager = LinearLayoutManager(activity)
+        }
         val recyclerNews = binding.recyclerNews
 
         recyclerNews.adapter = adapter
